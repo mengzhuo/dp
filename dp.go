@@ -9,13 +9,14 @@ import (
 
 	"github.com/go-mangos/mangos"
 	"github.com/go-mangos/mangos/protocol/pub"
+	"github.com/go-mangos/mangos/protocol/sub"
 	"github.com/go-mangos/mangos/transport/tcp"
 )
 
 var (
 	url    = flag.String("u", "tcp://0.0.0.0:9999", "URL that listen or attach")
 	topic  = flag.String("t", "dp", "Topic that publish/subscribe")
-	listen = flag.String("l", "", "pipeline listen at")
+	listen = flag.Bool("l", false, "pipeline listen at")
 )
 
 type writer struct {
@@ -53,7 +54,44 @@ func publish() {
 	}
 }
 
+func subscribe() {
+	sock, err := sub.NewSocket()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sock.Close()
+
+	sock.AddTransport(tcp.NewTransport())
+
+	if err = sock.Dial(*url); err != nil {
+		log.Fatal(err)
+	}
+
+	err = sock.SetOption(mangos.OptionSubscribe, []byte(*topic))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		var (
+			msg []byte
+			err error
+		)
+
+		if msg, err = sock.Recv(); err != nil {
+			log.Fatal(err)
+		} else {
+			os.Stdout.Write(msg)
+		}
+	}
+}
+
 func main() {
 	flag.Parse()
-
+	log.Println("boolean", *listen)
+	if *listen {
+		publish()
+	} else {
+		subscribe()
+	}
 }
