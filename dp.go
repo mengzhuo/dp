@@ -13,8 +13,9 @@ import (
 )
 
 var (
-	url   = flag.String("u", "tcp://127.0.0.1:9999", "URL that listen or attach")
-	topic = flag.String("t", "dp", "Topic that publish/subscribe")
+	url    = flag.String("u", "tcp://0.0.0.0:9999", "URL that listen or attach")
+	topic  = flag.String("t", "dp", "Topic that publish/subscribe")
+	listen = flag.String("l", "", "pipeline listen at")
 )
 
 type writer struct {
@@ -26,7 +27,7 @@ func (w *writer) Write(p []byte) (n int, err error) {
 	return len(p), err
 }
 
-func main() {
+func publish() {
 	sock, err := pub.NewSocket()
 	if err != nil {
 		log.Fatal(err)
@@ -50,4 +51,9 @@ func main() {
 		}
 		log.Printf("Write:%d", n)
 	}
+}
+
+func main() {
+	flag.Parse()
+
 }
