@@ -50,7 +50,6 @@ func publish() {
 		if n == 0 {
 			time.Sleep(time.Millisecond * 500)
 		}
-		log.Printf("Write:%d", n)
 	}
 }
 
@@ -87,8 +86,8 @@ func subscribe() {
 }
 
 func main() {
+	log.SetPrefix("dp: ")
 	flag.Parse()
-	log.Println("boolean", *listen)
 	if *listen {
 		publish()
 	} else {
