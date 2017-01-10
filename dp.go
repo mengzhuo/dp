@@ -15,7 +15,7 @@ import (
 
 var (
 	url    = flag.String("u", "tcp://0.0.0.0:9999", "URL that listen or attach")
-	topic  = flag.String("t", "dp", "Topic that publish/subscribe")
+	topic  = flag.String("t", "", "Topic that publish/subscribe")
 	listen = flag.Bool("l", false, "pipeline listen at")
 )
 
